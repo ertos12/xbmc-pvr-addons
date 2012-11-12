@@ -229,6 +229,18 @@ PVR_ERROR CHTSPData::GetChannels(ADDON_HANDLE handle, bool bRadio)
     if(bRadio != channel.radio)
       continue;
 
+    CStdString strStreamURL = "http://";
+    if (g_bUseHTTPStreaming)
+    {
+      if (g_strUsername != "" && g_strPassword != "")
+        strStreamURL.Format("%s%s:%s@", strStreamURL.c_str(), g_strUsername.c_str(), g_strPassword.c_str());
+      strStreamURL.Format("%s%s:%i/stream/channelid/%i", strStreamURL.c_str(), g_strHostname.c_str(), g_iPortHTTP, channel.id);
+    }
+    else
+    {
+      strStreamURL = "";
+    }
+
     PVR_CHANNEL tag;
     memset(&tag, 0 , sizeof(PVR_CHANNEL));
 
@@ -239,6 +251,7 @@ PVR_ERROR CHTSPData::GetChannels(ADDON_HANDLE handle, bool bRadio)
     tag.iEncryptionSystem = channel.caid;
     strncpy(tag.strIconPath, channel.icon.c_str(), sizeof(tag.strIconPath) - 1);
     tag.bIsHidden         = false;
+    strncpy(tag.strStreamURL, strStreamURL.c_str(), sizeof(tag.strStreamURL) - 1);
 
     PVR->TransferChannelEntry(handle, &tag);
   }
@@ -319,7 +332,7 @@ PVR_ERROR CHTSPData::GetRecordings(ADDON_HANDLE handle)
         strChannelName = itr->second.name.c_str();
 
       /* HTSPv7+ - use HTSP */
-      if (GetProtocol() >= 7)
+      if (!g_bUseHTTPStreaming && GetProtocol() >= 7)
         strStreamURL = "";
 
       /* HTSPv6- - use HTTP */

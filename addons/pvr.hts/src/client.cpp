@@ -50,6 +50,8 @@ bool        g_bTranscode              = DEFAULT_TRANSCODE;
 CodecID     g_iAudioCodec             = DEFAULT_AUDIO_CODEC;
 CodecID     g_iVideoCodec             = DEFAULT_VIDEO_CODEC;
 int         g_iResolution             = DEFAULT_RESOLUTION;
+bool        g_bUseHTTPStreaming       = DEFAULT_HTTP_STREAM;
+
 std::string g_strUsername             = "";
 std::string g_strPassword             = "";
 std::string g_strUserPath             = "";
@@ -139,6 +141,10 @@ void ADDON_ReadSettings(void)
   /* read setting "resolution" from settings.xml */
   if (!XBMC->GetSetting("resolution", &g_iResolution))
     g_iResolution = DEFAULT_RESOLUTION;
+
+  /* read setting "http_stream" from settings.xml */
+  if (!XBMC->GetSetting("http_stream", &g_bUseHTTPStreaming))
+    g_bUseHTTPStreaming = DEFAULT_HTTP_STREAM;
 }
 
 ADDON_STATUS ADDON_Create(void* hdl, void* props)
@@ -394,8 +400,8 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
   pCapabilities->bSupportsRecordings       = true;
   pCapabilities->bSupportsTimers           = true;
   pCapabilities->bSupportsChannelGroups    = true;
-  pCapabilities->bHandlesInputStream       = true;
-  pCapabilities->bHandlesDemuxing          = true;
+  pCapabilities->bHandlesInputStream       = !g_bUseHTTPStreaming;
+  pCapabilities->bHandlesDemuxing          = !g_bUseHTTPStreaming;
   pCapabilities->bSupportsRecordingFolders = true;
   return PVR_ERROR_NO_ERROR;
 }

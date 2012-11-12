@@ -36,6 +36,7 @@
 #define DEFAULT_RESOLUTION       480
 #define DEFAULT_TRANSCODE        false
 #define HTSP_DEBUGGING           0
+#define DEFAULT_HTTP_STREAM      0
 
 extern bool                      m_bCreated;
 extern std::string               g_strHostname;
@@ -45,6 +46,7 @@ extern std::string               g_strUsername;
 extern std::string               g_strPassword;
 extern int                       g_iConnectTimeout;
 extern int                       g_iResponseTimeout;
+extern bool                      g_bUseHTTPStreaming;
 extern bool                      g_bShowTimerNotifications;
 extern std::string               g_szUserPath;
 extern std::string               g_szClientPath;
